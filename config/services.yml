@@ -23,6 +23,14 @@ services:
                   - @log
                   - @user
 
+    eff.elite_bundle.cron.controller:
+            class: eff\elite_bundle\controller\cron_controller
+            arguments:
+                  - @log
+                  - @user
+                  - %bot_id%
+                  - %bot_ip%
+
     eff.elite_bundle.tools:
             class: eff\elite_bundle\core\tools
             arguments:

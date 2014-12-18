@@ -1,3 +1,7 @@
 elite_bundle_main_controller:
     pattern: /test
     defaults: { _controller: eff.elite_bundle.controller:display }
+
+elite_bundle_cron_controller:
+    pattern: /cron/task
+    defaults: { _controller: eff.elite_bundle.cron.controller:task }
