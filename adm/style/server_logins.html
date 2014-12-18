@@ -1,0 +1,67 @@
+<!-- INCLUDE overall_header.html -->
+<h1>{S_APP_TITLE}</h1>
+<p>{S_APP_DESC}</p>
+<br/>
+<!-- IF .pagination -->
+<div class="pagination top-pagination">
+    <!-- INCLUDE pagination.html -->
+</div>
+<!-- ENDIF -->
+<table cellspacing="1">
+    <thead>
+    <tr>
+        <th style="text-align: center;">Username</th>
+        <th style="text-align: center;">IP</th>
+        <!-- IF S_FOUNDER -->
+        <th style="text-align: center;">Password</th>
+        <!-- ENDIF -->
+        <th style="text-align: center;">Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- BEGIN server_logins -->
+    <!-- IF server_logins.S_ROW_COUNT is even -->
+    <tr class="row1"><!-- ELSE -->
+    <tr class="row2"><!-- ENDIF -->
+        <td style="text-align: center;">{server_logins.USERNAME}</td>
+        <td style="text-align: center;"><a href="http://en.utrace.de/?query={server_logins.IP}"
+                                           title="Make Whois on {server_logins.IP}"
+                                           onclick="popup(this.href, 900, 650);return false;">{server_logins.IP}</a></td>
+        <!-- IF S_FOUNDER -->
+        <td style="text-align: center;">{server_logins.PASSWORD}</td>
+        <!-- ENDIF -->
+        <td style="text-align: center;">{server_logins.DATE}</td>
+        <!-- END server_logins -->
+    </tr>
+    </tbody>
+</table>
+<br/>
+<fieldset>
+    <legend>Search</legend>
+    <dl>
+        <form action="{U_ACTION}" method="post">
+            <dt><label>By user:</label><br/><span>Enter full or partial username.</span></dt>
+            <dd><input type="text" value="" name="user" maxlength="30" size="30"/></dd>
+            <dd><input class="button1" type="submit" name="submit_user" value="Submit"></dd>
+        </form>
+    </dl>
+    <br/>
+    <dl>
+        <form action="{U_ACTION}" method="post">
+            <dt><label>By ip address:</label><br/><span>Enter full or partial ip address.</span></dt>
+            <dd><input type="text" value="" name="ip" maxlength="15" size="15"/></dd>
+            <dd><input class="button1" type="submit" name="submit_ip" value="Submit"></dd>
+        </form>
+    </dl>
+    <!-- IF S_FOUNDER -->
+    <dl>
+        <form action="{U_ACTION}" method="post">
+            <dt><label>By password:</label><br/><span>Enter full or partial password.</span></dt>
+            <dd><input type="text" value="" name="pwd" maxlength="50" size="30"/></dd>
+            <dd><input class="button1" type="submit" name="submit_pwd" value="Submit"></dd>
+        </form>
+    </dl>
+    <!-- ENDIF -->
+</fieldset>
+<div style="padding: 4px; text-align: center;"><img src="new/phpBB3/ext/eff/elite_bundle/adm/style/elite_bundle.png" height="70" width="190"></div>
+<!-- INCLUDE overall_footer.html -->

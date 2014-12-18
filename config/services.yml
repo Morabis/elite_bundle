@@ -1,0 +1,72 @@
+imports:
+- { resource: parameters.yml }
+services:
+    eff.elite_bundle.acp.controller:
+            class: eff\elite_bundle\controller\acp_controller
+            arguments:
+            - @dbal.conn
+            - @dbal.wiki_conn
+            - @dbal.glogs_conn
+            - @request
+            - @template
+            - @pagination
+            - @user
+            - @eff.elite_bundle.tools
+            - @log
+            - %core.root_path%
+            - %core.adm_relative_path%
+            - %core.php_ext%
+
+    eff.elite_bundle.controller:
+            class: eff\elite_bundle\controller\main_controller
+            arguments:
+                  - @log
+                  - @user
+
+    eff.elite_bundle.tools:
+            class: eff\elite_bundle\core\tools
+            arguments:
+                   - @eff.elite_bundle.server
+                   - @dbal.wiki_conn
+                   - %secret_key%
+                   - %secret_iv%
+
+    eff.elite_bundle.server:
+            class: eff\elite_bundle\core\server_query
+            arguments:
+                   - %server_ip%
+                   - %server_port%
+                   - %server_rcon%
+
+    eff.elite_bundle.server_query_result:
+            class: eff\elite_apps\core\server_query_result
+
+    eff.elite_bundle.server_query_buffer:
+            class: eff\elite_apps\core\server_query_buffer
+
+    eff.elite_bundle.listener:
+            class: eff\elite_bundle\event\listener
+            arguments:
+                - @config
+            tags:
+                - { name: event.listener }
+
+    cron.task.core.elite_bundle:
+            class: eff\elite_bundle\cron\task\core\elite_bundle
+            arguments:
+                - @config
+                - @log
+            calls:
+                - [set_name, [cron.task.core.elite_bundle]]
+            tags:
+                - { name: cron.task }
+
+    dbal.wiki_conn:
+                class: %dbal.driver.class%
+                calls:
+                    - [sql_connect, [%host%, %user%, %password%, %dbname_wiki%, %dbport%, false, false]]
+
+    dbal.glogs_conn:
+                class: %dbal.driver.class%
+                calls:
+                    - [sql_connect, [%host%, %user%, %password%, %dbname_glogs%, %dbport%, false, false]]

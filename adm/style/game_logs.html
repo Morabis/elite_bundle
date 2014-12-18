@@ -1,0 +1,287 @@
+<!-- INCLUDE overall_header.html -->
+
+<h1>{S_APP_TITLE}</h1>
+<p>{S_APP_DESC}</p>
+<br/>
+<p>Last entry's timestamp: {LAST_RECORD_DATE}</p>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+
+<form id="logform">
+    <!-- !!IDS IN INPUT FOR LABELS ONLY!! -->
+    <fieldset>
+        <legend>TimeRange</legend>
+        <fieldset>
+            <legend>Start</legend>
+            <div>Format: "year-month-day hour:minutes:seconds"</div>
+            <input id="datetimepicker_start" type="text" name="start" required="required">
+        </fieldset>
+        <fieldset>
+            <legend>End</legend>
+            <div>Format: "year-month-day hour:minutes:seconds"</div>
+            <input id="datetimepicker_end" type="text" name="end" required="required">
+        </fieldset>
+    </fieldset>
+    <fieldset>
+        <legend>Client</legend>
+        <input type="checkbox" name="data[]" value="3" id="clientConnect">
+        <label for="clientConnect">client Connect</label>
+        <input type="checkbox" name="data[]" value="19" id="connectedUnderIP">
+        <label for="connectedUnderIP">connnected under IP</label>
+        <input type="checkbox" name="data[]" value="5" id="clientbegin">
+        <label for="clientbegin">ClientBegin</label>
+        <input type="checkbox" name="data[]" value="12" id="clientDisconnect">
+        <label for="clientDisconnect">ClientDisconnect</label>
+        <input type="checkbox" name="data[]" value="4" id="clientUserInfoChanged">
+        <label for="clientUserInfoChanged">ClientUserInfoChanged</label>
+        <input type="checkbox" name="data[]" value="22" id="plugins">
+        <label for="plugins">Plugins</label>
+    </fieldset>
+    <fieldset>
+        <legend>Chat</legend>
+        <input type="checkbox" name="data[]" value="6" id="say">
+        <label for="say">say</label>
+        <input type="checkbox" name="data[]" value="9" id="sayteam">
+        <label for="sayteam">say_team</label>
+        <input type="checkbox" name="data[]" value="7" id="sayclan">
+        <label for="sayclan">say_clan</label>
+        <input type="checkbox" name="data[]" value="8" id="sayadmin">
+        <label for="sayadmin">say_admin</label>
+        <input type="checkbox" name="data[]" value="14" id="tell">
+        <label for="tell">tell</label>
+    </fieldset>
+    <fieldset>
+        <legend>Server</legend>
+        <input type="checkbox" name="data[]" value="1" id="init">
+        <label for="init">init</label>
+        <input type="checkbox" name="data[]" value="2" id="server">
+        <label for="server">Server</label>
+        <input type="checkbox" name="data[]" value="13" id="exit">
+        <label for="exit">Exit</label>
+        <input type="checkbox" name="data[]" value="17" id="shutdown">
+        <label for="shutdown">Shutdown</label>
+    </fieldset>
+    <fieldset>
+        <legend>Other</legend>
+        <input type="checkbox" name="data[]" value="10" id="kill">
+        <label for="kill">kill</label>
+        <input type="checkbox" name="data[]" value="16" id="duell">
+        <label for="duell">duel</label>
+        <input type="checkbox" name="data[]" value="18" id="setteam">
+        <label for="setteam">setteam</label>
+        <input type="checkbox" name="data[]" value="15" id="admincmd">
+        <label for="admincmd">Admin CMD</label>
+        <input type="checkbox" name="data[]" value="11" id="item">
+        <label for="item">item</label>
+        <input type="checkbox" name="data[]" value="20" id="loggedas">
+        <label for="loggedas">logged as (elder, council)</label>
+        <input type="checkbox" name="data[]" value="21" id="sameip">
+        <label for="sameip">Same ip</label>
+    </fieldset>
+
+    <div id="loading">LOADING DATA - PLEASE WAIT</div>
+    <br/>
+
+    <p class="submit-buttons">
+        <input class="button1" type="submit" id="prev" value="previous 5,000 rows"/>&nbsp;
+        <input class="button2" type="submit" id="senden" value="Show"/>&nbsp;
+        <input class="button1" type="submit" id="next" value="next 5,000 rows"/>&nbsp;
+        <input class="button2" type="submit" id="download" value="Download as file"/>&nbsp;
+        <input class="button2" type="submit" id="downloadlastday" value="Download last day as file"/>&nbsp;
+    </p>
+</form>
+<br/>
+<table cellspacing="1" id="data">
+    <tr>
+        <th style="text-align: center;">Timestamp</th>
+        <th style="text-align: center;">Event</th>
+        <th style="text-align: center;">Data</th>
+    </tr>
+</table>
+<br/>
+
+<link rel="stylesheet" type="text/css" href="new/phpBB3/ext/eff/elite_bundle/adm/style/css/jquery.datetimepicker.css"/>
+<script src="new/phpBB3/ext/eff/elite_bundle/adm/style/js/jquery.datetimepicker.js"></script>
+
+<script type="text/javascript">
+
+    $('#datetimepicker_start').datetimepicker(
+            {
+                validateOnBlur: false,
+                format: 'Y-m-d',
+                timepicker: false,
+            });
+    $('#datetimepicker_end').datetimepicker(
+            {
+                format: 'Y-m-d',
+                validateOnBlur: false,
+                timepicker: false,
+            });
+
+    $body = $("body");
+
+    $(document).on({
+        ajaxStart: function () { $body.addClass("loading"); },
+        ajaxStop: function () { $body.removeClass("loading"); }
+    });
+
+    $(function ()
+    {
+        //hide the forms
+        $('form #loading').hide();
+        $('form #prev').hide();
+        $('form #next').hide();
+
+        //vars
+        var localformdata = "";
+        var start = 0;
+
+        //senden click event
+        $('form #senden').click(function (e)
+        {
+            //start =0,
+            start = 0;
+            //catch submit event, and cancel it;
+            e.preventDefault();
+            //save form data to this variable (to avoid changes on next / prev
+            localformdata = $('form#logform :input').serialize();
+            //get datas  from server
+            showData();
+
+        });
+
+        //download click
+        $('form #download').click(function (e)
+        {
+            //catch submit;
+            e.preventDefault();
+            $.ajax({
+                url: window.location,
+                type: "POST",
+                data: { action: "dataExists", formdata: $('form#logform :input').serialize()},
+                dataType: "html"
+            }).done(function (answer)
+            {
+                if(answer == "strtrue")
+                {
+                    //change URL to download link (for download).
+                    //filter apply as currently selected
+                    window.location.href = window.location + "&action=downloaddata&" + $('form#logform :input').serialize();
+                }
+                else
+                {
+                    alert('No data for given time / filter!');
+                }
+            });
+
+            return;
+        });
+        //download click
+        $('form #downloadlastday').click(function (e)
+        {
+            //catch submit;
+            e.preventDefault();
+
+
+            var currentDay = new Date();
+            var PrevDay = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate()-1);
+
+            startDate = PrevDay.getFullYear().toString()+"-"+(PrevDay.getMonth()+1).toString()+"-"+PrevDay.getDate().toString();
+            endDate =  currentDay.getFullYear().toString()+"-"+(currentDay.getMonth()+1).toString()+"-"+currentDay.getDate().toString();
+
+            var filter = "start="+startDate+"&end="+endDate;
+            myFormdata = $('form#logform :input[type=checkbox]').serialize();
+            filter +="&"+myFormdata;
+
+            console.log(filter);
+            $.ajax({
+                url: window.location,
+                type: "POST",
+                data: { action: "dataExists", formdata: filter},
+                dataType: "html"
+            }).done(function (answer)
+            {
+                if(answer=="strtrue")
+                {
+                    //change URL to download link (for download).
+                    //filter apply as currently selected
+
+                    window.location.href=window.location+"&action=downloaddata&"+filter;
+                }
+                else
+                {
+                    alert('No data for given time / filter');
+                }
+            });
+
+            return;
+        });
+
+        //bext 5k
+        $('form #next').click(function (e)
+        {
+            e.preventDefault();
+
+            //inc counter
+            start = start + 5000;
+            showData();
+        });
+        $('form #prev').click(function (e)
+        {
+            e.preventDefault();
+            //dec counter
+            start = start - 5000;
+            showData();
+        });
+
+        function showData()
+        {
+            //show loading "screeN" and hide all btns
+            $('form #loading').show();
+            $('form #prev').hide();
+            $('form #next').hide();
+            $('form #senden').hide();
+
+            //simple ajax
+            $.ajax({
+                url: window.location,
+                type: "POST",
+                data: { action: "getdata", formdata: localformdata, idStart: start},
+                dataType: "html"
+            }).done(function (answer)
+            {
+                //decode answeer
+                var dataFromServer = JSON.parse(answer);
+                //clear table
+                $('#data .entry').remove();
+                //loop trough data and show it as TR
+                $(dataFromServer).each(function (index, data)
+                {
+                    singleRow = $('<tr class="row2"></tr>');
+                    $(singleRow).append($('<td style="text-align: center;">' + data['entry_ts'] + '</td>'));
+                    $(singleRow).append($('<td style="text-align: center;">' + data['entry_event_id'] + '</td>'));
+                    $(singleRow).append($('<td>' + data['entry_content'] + '</td>'));
+                    $('#data').append($(singleRow));
+                });
+
+                //check if got >= 5k entrys, and show button if so
+                if(dataFromServer.length >= 5000)
+                {
+                    $('form #next').show();
+                }
+                //show prev button when start >0
+                if(start > 0)
+                {
+                    $('form #prev').show();
+                }
+
+                //hide loading, show show button
+                $('form #senden').show();
+                $('form #loading').hide();
+            });
+        }
+    });
+</script>
+<div class="modal"></div>
+<div style="padding: 4px; text-align: center;"><img src="new/phpBB3/ext/eff/elite_bundle/adm/style/elite_bundle.png" height="70" width="190"></div>
+
+<!-- INCLUDE overall_footer.html -->

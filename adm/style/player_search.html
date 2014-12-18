@@ -1,0 +1,112 @@
+<!-- INCLUDE overall_header.html -->
+<h1>{S_APP_TITLE}</h1>
+<p>{S_APP_DESC}</p>
+<br />
+<fieldset>
+    <legend>Search user</legend>
+    <dl>
+        <form action="{U_ACTION}" method="post">
+            <dt><label>By name:</label><br/><span>Enter full or partial username.</span></dt>
+            <dd><input type="text" value="" name="user_name" maxlength="30" size="30"/></dd>
+            <dd><input class="button1" type="submit" name="submit_user" value="Submit"></dd>
+        </form>
+    </dl>
+    <dl>
+        <form action="{U_ACTION}" method="post">
+            <dt><label>By IP:</label><br/><span>Enter full or partial ip address.</span></dt>
+            <dd><input type="text" value="" name="user_ip" maxlength="30" size="30"/></dd>
+            <dd><input class="button1" type="submit" name="submit_user_ip" value="Submit"></dd>
+        </form>
+    </dl>
+</fieldset>
+<fieldset>
+    <legend>Search player</legend>
+    <dl>
+        <form action="{U_ACTION}" method="post">
+            <dt><label>By name:</label><br/><span>Enter full or partial username.</span></dt>
+            <dd><input type="text" value="" name="player_name" maxlength="30" size="30"/></dd>
+            <dd><input class="button1" type="submit" name="submit_player" value="Submit"></dd>
+        </form>
+    </dl>
+    <dl>
+        <form action="{U_ACTION}" method="post">
+            <dt><label>By IP:</label><br/><span>Enter full or partial ip address.</span></dt>
+            <dd><input type="text" value="" name="player_ip" maxlength="30" size="30"/></dd>
+            <dd><input class="button1" type="submit" name="submit_player_ip" value="Submit"></dd>
+        </form>
+    </dl>
+</fieldset>
+<br/>
+<!-- IF .pagination -->
+<div class="pagination top-pagination">
+    <!-- INCLUDE pagination.html -->
+</div>
+<!-- ENDIF -->
+<br />
+<!-- IF .user_search -->
+<form action="{U_ACTION}" method="post">
+<table>
+    <thead>
+    <tr>
+        <th style="text-align: center;">ID</th>
+        <th style="text-align: center;">Username</th>
+        <th style="text-align: center;">IP</th>
+        <!-- IF S_ID -->
+        <th style="text-align: center;">Select User</th>
+        <!-- ENDIF -->
+    </tr>
+    </thead>
+    <tbody>
+    <!-- BEGIN user_search -->
+    <!-- IF user_search.S_ROW_COUNT is even -->
+    <tr class="row1"><!-- ELSE -->
+    <tr class="row2"><!-- ENDIF -->
+        <td style="text-align: center;">{user_search.USER_ID}</td>
+        <td style="text-align: center;">{user_search.USER_NAME}</td>
+        <td style="text-align: center;"><a href="http://en.utrace.de/?query={user_search.USER_IP}"
+                                           title="Make Whois on {user_search.USER_IP}"
+                                           onclick="popup(this.href, 900, 650);return false;">{user_search.USER_IP}</a></td>
+        <!-- IF S_ID -->
+        <td style="text-align: center;"><input type="radio" name="user_id" value="{user_search.USER_ID}"></td>
+        <!-- ENDIF -->
+    <!-- END user_search -->
+    </tr>
+    </tbody>
+</table>
+<br>
+    <!-- IF S_ID -->
+    <fieldset>
+        <dl>
+            <dt><label>Get all ip address of selected user:</label></dt>
+            <input class="button1" type="submit" name="submit_user_id" value="Submit">
+        </dl>
+    </fieldset>
+    <!-- ENDIF -->
+</form>
+<!-- ENDIF -->
+<!-- IF .player_search -->
+<table>
+    <thead>
+    <tr>
+        <th style="text-align: center;">PLAYER</th>
+        <th style="text-align: center;">IP</th>
+        <th style="text-align: center;">DATE</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- BEGIN player_search -->
+    <!-- IF player_search.S_ROW_COUNT is even -->
+    <tr class="row1"><!-- ELSE -->
+    <tr class="row2"><!-- ENDIF -->
+        <td style="text-align: center;">{player_search.PLAYER_NAME}</td>
+        <td style="text-align: center;"><a href="http://en.utrace.de/?query={player_search.PLAYER_IP}"
+                                           title="Make Whois on {player_search.PLAYER_IP}"
+                                           onclick="popup(this.href, 900, 650);return false;">{player_search.PLAYER_IP}</a></td>
+		<td style="text-align: center;">{player_search.PLAYER_DATE}</td>
+    <!-- END player_search -->
+    </tr>
+    </tbody>
+</table>
+<!-- ENDIF -->
+<div style="padding: 4px; text-align: center;"><img src="style/elite_bundle.png" height="70" width="190"></div>
+<!-- INCLUDE overall_footer.html -->

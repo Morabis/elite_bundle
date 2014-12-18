@@ -1,0 +1,3 @@
+elite_bundle_main_controller:
+    pattern: /test
+    defaults: { _controller: eff.elite_bundle.controller:display }

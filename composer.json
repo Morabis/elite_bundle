@@ -1,0 +1,27 @@
+{
+    "name": "eff/elite_bundle",
+    "type": "phpbb-extension",
+    "description": "Extension containing all the applications and modifications made before by Morabis.",
+    "homepage": "http://www.eff-clan.org/new/phpbb3",
+    "version": "1.0.0-a1",
+    "time": "2014-12-12",
+    "keywords": ["phpbb", "extension", "elite bundle"],
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Morabis",
+            "homepage": "http://www.eff-clan.org",
+            "email": "admin@eff-clan.org",
+            "role": "Lead Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "extra": {
+        "display-name": "Elite Bundle",
+        "soft-require": {
+            "phpbb/phpbb": "3.1.*"
+        }
+    }
+}
