@@ -50,6 +50,7 @@ class acp_controller implements acp_interface
 
     public function display_game_logs()
     {
+        $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
 
         $action = $this->request->variable('action','',true);
         switch($action)
@@ -171,6 +172,8 @@ class acp_controller implements acp_interface
 
     public function display_server_logins()
     {
+        $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
+
         $submit_user = $this->request->is_set_post('submit_user');
         $submit_ip = $this->request->is_set_post('submit_ip');
         $submit_password = $this->request->is_set_post('submit_pwd');
@@ -271,6 +274,8 @@ class acp_controller implements acp_interface
 
     public function display_player_search()
     {
+        $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
+
         $submit_user = $this->request->is_set_post('submit_user');
         $submit_user_ip = $this->request->is_set_post('submit_user_ip');
         $submit_user_id = $this->request->is_set_post('submit_user_id');

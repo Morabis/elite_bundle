@@ -64,6 +64,7 @@ services:
             arguments:
                 - @config
                 - @log
+                - @user
             calls:
                 - [set_name, [cron.task.core.elite_bundle]]
             tags:

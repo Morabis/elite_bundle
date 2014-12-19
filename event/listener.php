@@ -25,8 +25,19 @@ class listener implements EventSubscriberInterface
 	{
 		return array(
             'core.acp_board_config_edit_add'	=> 'load_config_on_setup',
+            'core.user_setup'               => 'load_language_on_setup',
 		);
 	}
+
+    public function load_language_on_setup($event)
+    {
+        $lang_set_ext = $event['lang_set_ext'];
+        $lang_set_ext[] = array(
+            'ext_name' => 'eff/elite_bundle',
+            'lang_set' => 'elite_bundle',
+        );
+        $event['lang_set_ext'] = $lang_set_ext;
+    }
 
     public function load_config_on_setup($event)
     {
