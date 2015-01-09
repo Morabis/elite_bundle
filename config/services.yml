@@ -39,6 +39,11 @@ services:
                    - %secret_key%
                    - %secret_iv%
 
+    eff.elite_bundle.page:
+            class: eff\elite_bundle\core\page
+            arguments:
+                   - @dbal.wiki_conn
+
     eff.elite_bundle.server:
             class: eff\elite_bundle\core\server_query
             arguments:
