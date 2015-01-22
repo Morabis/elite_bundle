@@ -1,0 +1,47 @@
+<!-- INCLUDE overall_header.html -->
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+    $('form #action_ajax_testb').click(function (e)
+    {
+        e.preventDefault();
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.setOnLoadCallback(drawChart);
+
+    });
+
+    function drawChart() {
+        var jsonData = $.ajax({
+            url: window.location,
+            dataType:"json",
+            type: "POST",
+            data: { action: "test"}
+        }).responseText;
+
+        // Create our data table out of JSON data loaded from server.
+        var data = new google.visualization.DataTable(jsonData);
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, {width: 400, height: 240});
+    }
+</script>
+
+<h1>{S_APP_TITLE}</h1>
+<p>{S_APP_DESC}</p>
+<br/>
+<fieldset>
+    <legend>Ajax test</legend>
+    <form id="action_ajax_test" method="post" action="{U_ACTION}" data-ajax="ajax_test">
+        <dl>
+            <dt><label for="action_ajax_test">Ajax Test</label><br /><span>A simple test to use phpbb's ajax callback</span></dt>
+            <dd><input type="hidden" name="action" value="test" /><input class="button2" type="submit" id="action_ajax_testb" name="action_ajax_testb" value="Run" /></dd>
+        </dl>
+    </form>
+</fieldset>
+<div id="chart_div"></div>
+<div style="padding: 4px; text-align: center;"><img src="new/phpBB3/ext/eff/elite_bundle/adm/style/elite_bundle.png" height="70" width="190"></div>
+<!-- INCLUDE overall_footer.html -->

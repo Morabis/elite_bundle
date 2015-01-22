@@ -51,6 +51,15 @@ class elite_bundle_module
 
                 $acp_controller->display_player_search();
             break;
+
+            case activity_graphs:
+
+                $this->tpl_name = 'activity_graphs';
+                $this->page_title = 'Activity Graphs';
+
+                $acp_controller->display_activity_graphs();
+
+            break;
 		}
 	}
 }

@@ -20,4 +20,6 @@ interface acp_interface
 
     public function display_player_search();
 
+    public function display_activity_graphs();
+
 }

@@ -21,6 +21,7 @@ class elite_bundle_info
 				'game_logs'	=> array('title' => 'ACP_GAME_LOGS', 'auth' => 'ext_eff/elite_bundle && acl_a_gamelog_download', 'cat' => array('ACP_elite_bundle')),
                 'server_logins' => array('title' => 'ACP_SERVER_LOGINS', 'auth' => 'ext_eff/elite_bundle && acl_a_elite_lgntracker', 'cat' => array('ACP_elite_bundle')),
                 'player_search' => array('title' => 'ACP_PLAYER_SEARCH', 'auth' => 'ext_eff/elite_bundle && acl_a_elite_iptracker', 'cat' => array('ACP_elite_bundle')),
+                'activity_graphs' => array('title' => 'ACP_ACT_GRAPHS', 'auth' => 'ext_eff/elite_bundle && acl_a_elite_actracker', 'cat' => array('ACP_elite_bundle')),
 			),
 		);
 	}
