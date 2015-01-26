@@ -13,8 +13,9 @@ services:
             - @user
             - @eff.elite_bundle.tools
             - @log
+            - @path_helper
+            - @ext.manager
             - %core.root_path%
-            - %core.adm_relative_path%
             - %core.php_ext%
 
     eff.elite_bundle.controller:

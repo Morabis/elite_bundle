@@ -1,35 +1,4 @@
 <!-- INCLUDE overall_header.html -->
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script>
-    $('form #action_ajax_testb').click(function (e)
-    {
-        e.preventDefault();
-        // Load the Visualization API and the piechart package.
-        google.load('visualization', '1', {'packages':['corechart']});
-
-        // Set a callback to run when the Google Visualization API is loaded.
-        google.setOnLoadCallback(drawChart);
-
-    });
-
-    function drawChart() {
-        var jsonData = $.ajax({
-            url: window.location,
-            dataType:"json",
-            type: "POST",
-            data: { action: "test"}
-        }).responseText;
-
-        // Create our data table out of JSON data loaded from server.
-        var data = new google.visualization.DataTable(jsonData);
-
-        // Instantiate and draw our chart, passing in some options.
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, {width: 400, height: 240});
-    }
-</script>
-
 <h1>{S_APP_TITLE}</h1>
 <p>{S_APP_DESC}</p>
 <br/>
@@ -43,5 +12,5 @@
     </form>
 </fieldset>
 <div id="chart_div"></div>
-<div style="padding: 4px; text-align: center;"><img src="new/phpBB3/ext/eff/elite_bundle/adm/style/elite_bundle.png" height="70" width="190"></div>
+<div style="padding: 4px; text-align: center;"><img src="{EXT_PATH}/adm/style/elite_bundle.png" height="70" width="190"></div>
 <!-- INCLUDE overall_footer.html -->

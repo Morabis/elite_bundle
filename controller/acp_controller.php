@@ -22,12 +22,13 @@ class acp_controller implements acp_interface
 	protected $user;
     protected $tools;
     protected $log;
+    protected $path_helper;
+    protected $extension_manager;
 	protected $phpbb_root_path;
-	protected $phpbb_admin_path;
 	protected $php_ext;
 	protected $u_action;
 
-	public function __construct(\phpbb\db\driver\driver_interface $main_db, \phpbb\db\driver\driver_interface $wiki_db, \phpbb\db\driver\driver_interface $glogs_db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\pagination $pagination, \phpbb\user $user,\eff\elite_bundle\core\tools $tools,  \phpbb\log\log_interface $log, $phpbb_root_path, $relative_admin_path, $php_ext)
+	public function __construct(\phpbb\db\driver\driver_interface $main_db, \phpbb\db\driver\driver_interface $wiki_db, \phpbb\db\driver\driver_interface $glogs_db, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\pagination $pagination, \phpbb\user $user,\eff\elite_bundle\core\tools $tools,  \phpbb\log\log_interface $log,\phpbb\path_helper $path_helper,\phpbb\extension\manager $extension_manager, $phpbb_root_path, $php_ext)
 	{
 		$this->main_db = $main_db;
         $this->wiki_db = $wiki_db;
@@ -38,8 +39,9 @@ class acp_controller implements acp_interface
 		$this->user = $user;
         $this->tools = $tools;
         $this->log = $log;
+        $this->extension_manager = $extension_manager;
+        $this->path_helper = $path_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
-		$this->phpbb_admin_path = $this->phpbb_root_path . $relative_admin_path;
 		$this->php_ext = $php_ext;
 	}
 
@@ -47,6 +49,13 @@ class acp_controller implements acp_interface
 	{
 		$this->u_action = $u_action;
 	}
+
+    private function ext_path()
+    {
+        $extension_path = $this->path_helper->update_web_root_path($this->extension_manager->get_extension_path('eff/elite_bundle',true));
+
+        return $extension_path;
+    }
 
     public function display_game_logs()
     {
@@ -62,6 +71,7 @@ class acp_controller implements acp_interface
                     'ADM_PATH' => $this->phpbb_admin_path,
                     'S_APP_TITLE' => 'Log Files',
                     'S_APP_DESC' => "Department of Defense application for accessing server log files.<br/><br/>Provide a date/time range, select filter options and click on 'Show' to see logs or 'Download File' to download logs as a txt file.<br/><br/>A single request is limited to 5000 lines!",
+                    'EXT_PATH' => $this->ext_path(),
                 ));
 
                 $sql = 'SELECT entry_ts
@@ -189,6 +199,7 @@ class acp_controller implements acp_interface
             'S_APP_TITLE'   => 'Server Logins',
             'S_APP_DESC'	=> 'SERVER_LOGINS_DESC',
             'S_FOUNDER' => $this->user->data['user_type'] == USER_FOUNDER ? true : false ,
+            'EXT_PATH' => $this->ext_path(),
         ));
 
         $sql =
@@ -292,6 +303,7 @@ class acp_controller implements acp_interface
         $this->template->assign_vars(array(
             'S_APP_TITLE'   => 'Player Tracker',
             'S_APP_DESC'	=> "Department of Defense application to search for players and users.",
+            'EXT_PATH' => $this->ext_path(),
         ));
 
         if($submit_user || $search == 'user')
@@ -430,6 +442,7 @@ class acp_controller implements acp_interface
         $this->template->assign_vars(array(
             'S_APP_TITLE'   => 'title text',
             'S_APP_DESC'	=> "description text",
+            'EXT_PATH' => $this->ext_path(),
         ));
 
         $action = $this->request->variable('action','');
