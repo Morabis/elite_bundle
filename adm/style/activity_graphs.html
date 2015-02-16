@@ -1,16 +1,124 @@
 <!-- INCLUDE overall_header.html -->
+
 <h1>{S_APP_TITLE}</h1>
 <p>{S_APP_DESC}</p>
 <br/>
+<p>Last entry's timestamp: {LAST_RECORD_DATE}</p>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+
+
 <fieldset>
-    <legend>Ajax test</legend>
-    <form id="action_ajax_test" method="post" action="{U_ACTION}" data-ajax="ajax_test">
-        <dl>
-            <dt><label for="action_ajax_test">Ajax Test</label><br /><span>A simple test to use phpbb's ajax callback</span></dt>
-            <dd><input type="hidden" name="action" value="test" /><input class="button2" type="submit" id="action_ajax_testb" name="action_ajax_testb" value="Run" /></dd>
-        </dl>
-    </form>
+    <legend>Show list:</legend>
+    <dl>
+            <dt><label>Only recruits:</label><br/><span>Show you the list of recruits who played on server.</span>
+            </dt>
+    </dl>
+    <dl>
+            <dt><label>Full list:</label><br/><span>Show you the complete list of players.</span></dt>
+    </dl>
+    <dl>
+            <dt><label>Only members:</label><br/><span>Show you the list of EFF members who played on server.</span>
+            </dt>
+    </dl>
 </fieldset>
-<div id="chart_div"></div>
+<br/>
+<fieldset>
+    <legend>Search for specific player:</legend>
+    <dl>
+        <form method="post" action="{S_SUBMIT}">
+            <dt><input id="player" type="text" value="" name="player" maxlength="30" size="30"/><br/><span>Enter a player name or part of it and click on submit.</span>
+            </dt>
+            <dd><input class="button1" type="submit" id="submit_player" name="submit_player" value="Submit"></dd>
+        </form>
+    </dl>
+</fieldset>
+
+
+<form id="logform">
+    <!-- !!IDS IN INPUT FOR LABELS ONLY!! -->
+    <div id="chart"></div>
+    <br/>
+    <p class="submit-buttons">
+        <input class="button2" type="submit" id="senden" value="Show HighChart"/>
+    </p>
+</form>
+
+<script type="text/javascript">
+
+    $body = $("body");
+
+    $(document).on({
+        ajaxStart: function () { $body.addClass("loading"); },
+        ajaxStop: function () { $body.removeClass("loading"); }
+    });
+
+    $(function ()
+    {
+        //hide the forms
+        $('form #loading').hide();
+
+        //senden click event
+        $('form #senden').click(function (e)
+        {
+            e.preventDefault();
+            InitHighChart();
+        });
+
+        function InitHighChart()
+        {
+            //show loading "screeN" and hide all btns
+            $('form #loading').show();
+            $('form #senden').hide();
+
+            $("#chart").html("Wait, Loading graph...");
+
+            var options = {
+                chart: {
+                    renderTo: 'chart',
+                    type: 'column'
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Activity in the last 60 days (minutes/day).'
+                },
+                xAxis: {
+                    categories: [{}],
+                    labels: {
+                        rotation: 90
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        minPointLength: 3
+                    }
+                },
+                series: [{}]
+            };
+
+            //simple ajax
+            $.ajax({
+                url: window.location,
+                type: "POST",
+                data: { action: "getdata"},
+                dataType: "json"
+            }).done(function (data)
+                    {
+                        //decode answeer
+                        options.xAxis.categories = data.days;
+                        options.series[0].name = 'Minutes';
+                        options.series[0].data = data.minutes;
+                        var chart = new Highcharts.Chart(options);
+
+                        //hide loading, show show button
+                        $('form #senden').show();
+                        $('form #loading').hide();
+                    });
+        }
+    });
+</script>
+<div class="modal"></div>
 <div style="padding: 4px; text-align: center;"><img src="{EXT_PATH}/adm/style/elite_bundle.png" height="70" width="190"></div>
 <!-- INCLUDE overall_footer.html -->
