@@ -22,6 +22,6 @@ class main_controller implements main_interface
 
 	public function display()
 	{
-
+        $this->log->add('admin',$this->user->data['user_id'],$this->user->ip,'Executed test task');
 	}
 }
