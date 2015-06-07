@@ -24,15 +24,44 @@
 </fieldset>
 <br/>
 <fieldset>
-    <legend>Search for specific player:</legend>
+    <legend>Search for all players:</legend>
     <dl>
         <form method="post" action="{S_SUBMIT}">
-            <dt><input id="player" type="text" value="" name="player" maxlength="30" size="30"/><br/><span>Enter a player name or part of it and click on submit.</span>
-            </dt>
-            <dd><input class="button1" type="submit" id="submit_player" name="submit_player" value="Submit"></dd>
+            <dt><input class="button1" type="submit" id="submit_full" name="submit_full" value="Submit"></dt>
         </form>
     </dl>
 </fieldset>
+
+<!-- IF .pagination -->
+<div class="pagination top-pagination">
+    <!-- INCLUDE pagination.html -->
+</div>
+<!-- ENDIF -->
+<br />
+<!-- IF .players -->
+    <table>
+        <thead>
+        <tr>
+            <th style="text-align: center;">Name</th>
+            <th style="text-align: center;">Date</th>
+            <th style="text-align: center;">Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- BEGIN players -->
+        <!-- IF players.S_ROW_COUNT is even -->
+        <tr class="row1">
+            <!-- ELSE -->
+        <tr class="row2">
+            <!-- ENDIF -->
+            <td style="text-align: center;">{players.NAME}</td>
+            <td style="text-align: center;">{players.DATE}</td>
+            <td style="text-align: center;">{players.TIME}</td>
+            <!-- END players -->
+        </tr>
+        </tbody>
+    </table>
+<!-- ENDIF -->
 
 
 <form id="logform">

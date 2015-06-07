@@ -441,7 +441,69 @@ class acp_controller implements acp_interface
     {
         $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
 
+        $search = $this->request->variable('search','no',true);
+        $start = $this->request->variable('start',0);
+        $count = 0;
+        $limit = 25;
         $action = $this->request->variable('action','',true);
+
+        $submit_full = $this->request->is_set_post('submit_full');
+        $submit_members = $this->request->is_set_post('submit_members');
+        $submit_recruits = $this->request->is_set_post('submit_recruits');
+
+        if($submit_full || $submit_members || $submit_recruits || $search == 'full' || $search == 'members' || $search == 'recruits')
+        {
+            if($submit_full || $search == 'full') {
+                $search = 'full';
+
+                $sql = 'SELECT player, time, date
+				FROM ' . 'activity'. '
+				ORDER BY date DESC';
+            }
+
+            if($submit_members || $search == 'members') {
+                $search = 'members';
+
+                $sql = 'SELECT DISTINCT player, time, date
+				FROM ' . 'activity'. "
+				WHERE player LIKE '%»|EFF|«%'". "
+				OR player LIKE '%eff.%'".'
+				ORDER BY player ASC';
+            }
+
+            if($submit_recruits || $search == 'recruits') {
+                $search = 'recruits';
+
+                $sql = 'SELECT DISTINCT player, time, date
+				FROM ' . 'activity'. "
+				WHERE player LIKE '%(EFF)%'".'
+				ORDER BY date DESC';
+            }
+
+            $result = $this->wiki_db->sql_query($sql);
+
+            while($row = $this->wiki_db->sql_fetchrow($result))
+            {
+                if ($count>=$start && $count< $start+$limit)
+                {
+                    $this->template->assign_block_vars('players', array(
+                        'NAME'		=> $row['player'],
+                        'TIME'		=> $row['time'],
+                        'DATE'		=> $row['date']));
+                }
+                $count++;
+            }
+
+            $this->wiki_db->sql_freeresult($result);
+
+            if($count == 0){trigger_error('No results!'.adm_back_link($this->u_action),E_USER_WARNING);}
+
+            $base_url = $this->u_action.'&amp;search='.$search;
+
+            $this->pagination->generate_template_pagination($base_url,'pagination','start',$count,$limit,$start);
+
+        }
+
         switch($action)
         {
 
