@@ -3,34 +3,37 @@
 <h1>{S_APP_TITLE}</h1>
 <p>{S_APP_DESC}</p>
 <br/>
-<p>Last entry's timestamp: {LAST_RECORD_DATE}</p>
 <script src="http://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 
-
+<form method="post" action="{S_SUBMIT}">
 <fieldset>
     <legend>Show list:</legend>
     <dl>
             <dt><label>Only recruits:</label><br/><span>Show you the list of recruits who played on server.</span>
             </dt>
+        <dd><input class="button1" type="submit" id="submit_recruits" name="submit_recruits" value="Submit"></dd>
     </dl>
     <dl>
             <dt><label>Full list:</label><br/><span>Show you the complete list of players.</span></dt>
+        <dd><input class="button1" type="submit" id="submit_full" name="submit_full" value="Submit"></dd>
     </dl>
     <dl>
             <dt><label>Only members:</label><br/><span>Show you the list of EFF members who played on server.</span>
             </dt>
+        <dd><input class="button1" type="submit" id="submit_members" name="submit_members" value="Submit"></dd>
     </dl>
 </fieldset>
 <br/>
 <fieldset>
-    <legend>Search for all players:</legend>
+    <legend>Search for a specific player:</legend>
     <dl>
-        <form method="post" action="{S_SUBMIT}">
-            <dt><input class="button1" type="submit" id="submit_full" name="submit_full" value="Submit"></dt>
-        </form>
+        <dt><input id="player" type="text" value="" name="player" maxlength="30" size="30"/><br/><span>Enter a full or partial player name.</span>
+        </dt>
+        <dd><input class="button1" type="submit" id="submit_player" name="submit_player" value="Submit"></dd>
     </dl>
 </fieldset>
+</form>
 
 <!-- IF .pagination -->
 <div class="pagination top-pagination">
@@ -56,7 +59,7 @@
             <!-- ENDIF -->
             <td style="text-align: center;">{players.NAME}</td>
             <td style="text-align: center;">{players.DATE}</td>
-            <td style="text-align: center;">{players.TIME}</td>
+            <td style="text-align: center;"><input type="radio" name="selected_player" value="{players.NAME}"></td>
             <!-- END players -->
         </tr>
         </tbody>
@@ -66,11 +69,11 @@
 
 <form id="logform">
     <!-- !!IDS IN INPUT FOR LABELS ONLY!! -->
-    <div id="chart"></div>
     <br/>
     <p class="submit-buttons">
-        <input class="button2" type="submit" id="senden" value="Show HighChart"/>
+        <input class="button1" type="submit" id="senden" value="Show Graph"/>
     </p>
+    <div id="chart"></div>
 </form>
 
 <script type="text/javascript">
@@ -105,6 +108,8 @@
 
             $("#chart").html("Wait, Loading graph...");
 
+            var player_name = $('input:radio[name=selected_player]').filter(":checked").val();
+
             var options = {
                 chart: {
                     renderTo: 'chart',
@@ -114,7 +119,7 @@
                     enabled: false
                 },
                 title: {
-                    text: 'Activity in the last 60 days (minutes/day).'
+                    text: 'Activity for '+player_name+' in the last 60 days (minutes/day).'
                 },
                 xAxis: {
                     categories: [{}],
@@ -133,8 +138,9 @@
             //simple ajax
             $.ajax({
                 url: window.location,
+                timeout: 3000,
                 type: "POST",
-                data: { action: "getdata"},
+                data: { action: "getdata", player_name: player_name},
                 dataType: "json"
             }).done(function (data)
                     {

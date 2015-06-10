@@ -53,10 +53,10 @@ services:
                    - %server_rcon%
 
     eff.elite_bundle.server_query_result:
-            class: eff\elite_apps\core\server_query_result
+            class: eff\elite_bundle\core\server_query_result
 
     eff.elite_bundle.server_query_buffer:
-            class: eff\elite_apps\core\server_query_buffer
+            class: eff\elite_bundle\core\server_query_buffer
 
     eff.elite_bundle.listener:
             class: eff\elite_bundle\event\listener

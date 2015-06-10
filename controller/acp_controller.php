@@ -446,17 +446,19 @@ class acp_controller implements acp_interface
         $count = 0;
         $limit = 25;
         $action = $this->request->variable('action','',true);
+        $player_name = $this->request->variable('player_name','',true);
 
         $submit_full = $this->request->is_set_post('submit_full');
         $submit_members = $this->request->is_set_post('submit_members');
         $submit_recruits = $this->request->is_set_post('submit_recruits');
+        $submit_player = $this->request->is_set_post('submit_player');
 
-        if($submit_full || $submit_members || $submit_recruits || $search == 'full' || $search == 'members' || $search == 'recruits')
+        if($submit_full || $submit_members || $submit_recruits || $submit_player || $search == 'full' || $search == 'members' || $search == 'recruits' || $search == 'player' )
         {
             if($submit_full || $search == 'full') {
                 $search = 'full';
 
-                $sql = 'SELECT player, time, date
+                $sql = 'SELECT DISTINCT player, time, date
 				FROM ' . 'activity'. '
 				ORDER BY date DESC';
             }
@@ -477,6 +479,17 @@ class acp_controller implements acp_interface
                 $sql = 'SELECT DISTINCT player, time, date
 				FROM ' . 'activity'. "
 				WHERE player LIKE '%(EFF)%'".'
+				ORDER BY date DESC';
+            }
+
+            if($submit_player || $search == 'player')
+            {
+                $search = 'player';
+                $player = $this->request->variable('player','',true);
+
+                $sql = 'SELECT DISTINCT player, time, date
+				FROM ' . 'activity'. "
+				WHERE player LIKE _latin1'%".$player."%'".'
 				ORDER BY date DESC';
             }
 
@@ -510,8 +523,8 @@ class acp_controller implements acp_interface
             default:
                 $this->template->assign_vars(array(
                     'S_SUBMIT' => $this->u_action,
-                    'S_APP_TITLE' => 'title',
-                    'S_APP_DESC' => "desc",
+                    'S_APP_TITLE' => 'Activity Graphs',
+                    'S_APP_DESC' => "Department of Recruiting tool to gather data about players' activity on server.",
                     'EXT_PATH' => $this->ext_path(),
                 ));
                 break;
@@ -520,16 +533,19 @@ class acp_controller implements acp_interface
 
                 $sql = "SELECT date,time
 				  FROM activity
-				  WHERE player LIKE 123
+				  WHERE player ='".$player_name."'
 			    AND date >= DATE_SUB( NOW( ) , INTERVAL 60 DAY )";
 
                 $result = $this->wiki_db->sql_query($sql);
+                $count = 0;
 
                 while ($row = $this->wiki_db->sql_fetchrow($result))
                 {
                     $dates[] = date('d.m.',strtotime($row['date']));
                     $times[] = (int)$row['time'];
+                    $count++;
                 }
+                if($count < 1){trigger_error('No results!'.adm_back_link($this->u_action),E_USER_WARNING);}
 
                 for ($i=0; $i<60; $i++) {
                     $days[] = date('d.m.',time()-$i*24*60*60);
