@@ -580,6 +580,173 @@ class acp_controller implements acp_interface
         }
     }
 
+    public function display_system_messages()
+    {
+        $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
+
+        $this->template->assign_vars(array(
+            'S_APP_TITLE'   => 'System Messages',
+            'S_APP_DESC'	=> 'Administrative tool',
+            'EXT_PATH' => $this->ext_path(),
+        ));
+
+        $submit_user = $this->request->is_set_post('submit_user');
+        $submit_message = $this->request->is_set_post('submit_message');
+
+        $search = $this->request->variable('search','no',true);
+        $start = $this->request->variable('start',0);
+        $count = 0;
+        $limit = 15;
+
+        $sql = 'SELECT user_id, username
+				FROM ' . USERS_TABLE ."
+				WHERE user_type != 2"."
+				ORDER BY UPPER(username)";
+
+        $result = $this->main_db->sql_query($sql);
+        while ($row = $this->main_db->sql_fetchrow($result))
+        {
+            $this->template->assign_block_vars('users', array(
+                'ID'		=> $row['user_id'],
+                'NAME'		=> $row['username'],));
+        }
+        $this->main_db->sql_freeresult($result);
+
+        if($submit_user || $search=='no' || $search=='full' || $search=='user')
+        {
+            if($search == 'no' || $search == 'full') {
+                $search = 'full';
+
+                $base_url = $this->u_action.'&amp;search='.$search;
+
+                $sql = 'SELECT msg_id, author_id,message_time,message_subject,to_address
+				FROM ' . PRIVMSGS_TABLE . '
+				ORDER BY message_time DESC';
+            }
+
+            if($submit_user || $search == 'user') {
+                $search = 'user';
+                $user = $this->request->variable('user',0,true);
+                list ($id, $sender) = explode(';',$this->request->variable('submit_user','',true));
+
+                if($user == ''){$user = $id;}
+
+                $base_url = $this->u_action.'&amp;search='.$search.'&amp;user='.$user;
+
+                $sql = 'SELECT msg_id, author_id,message_time,message_subject,to_address
+				FROM ' . PRIVMSGS_TABLE . "
+				WHERE author_id=$user".'
+				ORDER BY message_time DESC';
+            }
+
+                $result = $this->main_db->sql_query($sql);
+
+                while($row = $this->main_db->sql_fetchrow($result))
+                {
+                    if ($count>=$start && $count< $start+$limit)
+                    {
+                        $msg_ids[] = $row['msg_id'];
+                        $msg_from[] = $row['author_id'];
+                        $msg_to[] = $row['to_address'];
+                        $msg_title[] = $row['message_subject'];
+                        $msg_time[] = $this->user->format_date($row['message_time'], 'd M Y, H:i');
+                    }
+                    $count++;
+                }
+                $this->main_db->sql_freeresult($result);
+
+                if($count == 0){trigger_error('No results!'.adm_back_link($this->u_action),E_USER_WARNING);}
+
+                for ($i=0;$i<count($msg_from);$i++)
+                {
+                    $sql = 'SELECT username
+						FROM ' . USERS_TABLE . "
+						WHERE user_id=$msg_from[$i]";
+                    $result = $this->main_db->sql_query($sql);
+                    $row = $this->main_db->sql_fetchrow($result);
+                    $this->main_db->sql_freeresult($result);
+                    $msg_from_names[] = $row['username'];
+                }
+
+                for ($i=0;$i<count($msg_to);$i++)
+                {
+                    $name = '';
+                    $msg_to_ary = explode(':',$msg_to[$i]);
+                    for ($j=0;$j<count($msg_to_ary);$j++)
+                    {
+                        if(preg_match('/^u_(\d)*$/',$msg_to_ary[$j],$matches))
+                        {
+                            $to_id = str_replace('u_', '', $matches[0]);
+                            $sql = 'SELECT username
+								FROM ' . USERS_TABLE . "
+								WHERE user_id=$to_id";
+
+                            $result = $this->main_db->sql_query($sql);
+                            $row = $this->main_db->sql_fetchrow($result);
+                            $this->main_db->sql_freeresult($result);
+
+                            if($j > 0){$name = $name .','. $row['username'];}
+                            else{$name = $row['username'];}
+                        }
+                        if(preg_match('/^g_(\d)*$/',$msg_to_ary[$j],$matches))
+                        {
+                            $group_id = str_replace('g_', '', $matches[0]);
+                            $sql = 'SELECT group_name
+								FROM ' . GROUPS_TABLE . "
+								WHERE group_id=$group_id";
+
+                            $result = $this->main_db->sql_query($sql);
+                            $row = $this->main_db->sql_fetchrow($result);
+                            $this->main_db->sql_freeresult($result);
+
+                            if($j > 0){$name = $name .','. $row['group_name'];}
+                            else{$name = $row['group_name'];}
+                        }
+                    }
+                    $msg_to_names[] = $name;
+                }
+
+                for ($i=0;$i<count($msg_ids);$i++) {
+                    $this->template->assign_block_vars('message', array(
+                        'ID' => $msg_ids[$i],
+                        'FROM' => $msg_from_names[$i],
+                        'FROM_ID' => $msg_from[$i],
+                        'TO' => $msg_to_names[$i],
+                        'TITLE' => $msg_title[$i],
+                        'TIME' => $msg_time[$i],));
+                }
+
+                $this->pagination->generate_template_pagination($base_url,'pagination','start',$count,$limit,$start);
+        }
+
+        if($submit_message)
+        {
+            $msg_opt = $this->request->variable('msg_opt','',true);
+            list($msg_from, $msg_to, $msg_id) = explode(';',$msg_opt);
+
+            $sql = 'SELECT message_text,bbcode_bitfield,bbcode_uid,enable_bbcode,enable_smilies,enable_magic_url,author_ip
+				FROM ' . PRIVMSGS_TABLE . "
+				WHERE msg_id=$msg_id";
+
+            $result = $this->main_db->sql_query($sql);
+            $row = $this->main_db->sql_fetchrow($result);
+            $this->main_db->sql_freeresult($result);
+
+            $bbcode_options = (($row['enable_bbcode']) ? OPTION_FLAG_BBCODE : 0) +
+                (($row['enable_smilies']) ? OPTION_FLAG_SMILIES : 0) +
+                (($row['enable_magic_url']) ? OPTION_FLAG_LINKS : 0);
+
+            $message = generate_text_for_display($row['message_text'], $row['bbcode_uid'], $row['bbcode_bitfield'], $bbcode_options);
+
+            $this->template->assign_var('S_MESSAGE',$message);
+            $this->template->assign_var('S_FROM',$msg_from);
+            $this->template->assign_var('S_TO',$msg_to);
+            $this->template->assign_var('S_MID',$msg_id);
+            $this->template->assign_var('S_IP',$row['author_ip']);
+        }
+
+    }
+
 }
 
 

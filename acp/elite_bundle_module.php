@@ -60,6 +60,14 @@ class elite_bundle_module
                 $acp_controller->display_activity_graphs();
 
             break;
+
+            case system_messages:
+
+                $this->tpl_name = 'system_messages';
+                $this->page_title = 'System Messages';
+
+                $acp_controller->display_system_messages();
+                break;
 		}
 	}
 }

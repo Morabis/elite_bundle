@@ -22,4 +22,6 @@ interface acp_interface
 
     public function display_activity_graphs();
 
+    public function display_system_messages();
+
 }

@@ -1,0 +1,69 @@
+<!-- INCLUDE overall_header.html -->
+<h1>{S_APP_TITLE}</h1>
+<p>{S_APP_DESC}</p>
+<br/>
+<form method="post" action="{U_ACTION}">
+<fieldset>
+    <legend>Filter messages by sender</legend>
+    <dl>
+        <dt>
+            <select name="submit_user" onchange="this.form.submit()">
+                <option value="" selected disabled> -- Select a user -- </option>
+                <!-- BEGIN users -->
+                <option value="{users.ID};{users.NAME}">{users.NAME}</option>
+                <!-- END users -->
+            </select>
+        </dt>
+    </dl>
+</fieldset>
+<!-- IF .pagination -->
+<div class="pagination top-pagination">
+    <!-- INCLUDE pagination.html -->
+</div>
+<!-- ENDIF -->
+<table cellspacing="1">
+    <thead>
+    <tr>
+        <th style="text-align: center;">id</th>
+        <th style="text-align: center;">from</th>
+        <th style="text-align: center;">to</th>
+        <th style="text-align: center;">title</th>
+        <th style="text-align: center;">time</th>
+        <th style="text-align: center;">Select</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- BEGIN message -->
+    <!-- IF message.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+        <td style="text-align: center;">{message.ID}</td>
+        <td style="text-align: center;">{message.FROM}</td>
+        <td style="text-align: center;">{message.TO}</td>
+        <td style="text-align: center;">{message.TITLE}</td>
+        <td style="text-align: center;">{message.TIME}</td>
+        <td style="text-align: center;"><input type="radio" name="msg_opt" value="{message.FROM};{message.TO};{message.ID}"></td>
+        <!-- END message -->
+    </tr>
+    </tbody>
+</table>
+    <input class="button1" type="submit" name="submit_message" value="Show Message">
+</form>
+<br />
+<!-- IF S_MESSAGE -->
+<fieldset>
+    <legend>Message: </legend>
+    <dl>
+        <dt><label>Message ID:</label></dt><dd>{S_MID}</dd>
+    </dl>
+    <dl>
+        <dt><label>Sender:</label></dt><dd>{S_FROM} <!-- IF S_IP -->({S_IP})<!-- ENDIF --></dd>
+    </dl>
+    <dl>
+        <dt><label>Recipient(s):</label></dt><dd>{S_TO}</dd>
+    </dl>
+    <dl>
+        <div>{S_MESSAGE}</div>
+    </dl>
+</fieldset>
+<!-- ENDIF -->
+<div style="padding: 4px; text-align: center;"><img src="{EXT_PATH}/adm/style/elite_bundle.png" height="70" width="190"></div>
+<!-- INCLUDE overall_footer.html -->
