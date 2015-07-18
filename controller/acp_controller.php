@@ -747,6 +747,11 @@ class acp_controller implements acp_interface
 
     }
 
+    public function display_member_profiles()
+    {
+
+    }
+
 }
 
 

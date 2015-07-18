@@ -68,6 +68,14 @@ class elite_bundle_module
 
                 $acp_controller->display_system_messages();
                 break;
+
+            case member_profile:
+
+                $this->tpl_name = 'member_profile';
+                $this->page_title = 'Member Profiles';
+
+                $acp_controller->display_member_profiles();
+                break;
 		}
 	}
 }

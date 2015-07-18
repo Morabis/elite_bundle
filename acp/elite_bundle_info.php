@@ -23,6 +23,7 @@ class elite_bundle_info
                 'player_search' => array('title' => 'ACP_PLAYER_SEARCH', 'auth' => 'ext_eff/elite_bundle && acl_a_elite_iptracker', 'cat' => array('ACP_elite_bundle')),
                 'activity_graphs' => array('title' => 'ACP_ACT_GRAPHS', 'auth' => 'ext_eff/elite_bundle && acl_a_elite_actracker', 'cat' => array('ACP_elite_bundle')),
                 'system_messages' => array('title' => 'ACP_SYS_MSGS', 'auth' => 'ext_eff/elite_bundle && acl_a_elite_mstracker', 'cat' => array('ACP_elite_bundle')),
+                'member_profile' => array('title' => 'ACP_WIKI_MEMBER_PROFILE', 'auth' => 'ext_eff/elite_bundle && acl_a_elite_wiki_member_profile', 'cat' => array('ACP_elite_bundle')),
 			),
 		);
 	}

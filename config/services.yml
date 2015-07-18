@@ -23,6 +23,11 @@ services:
             arguments:
                   - @log
                   - @user
+                  - @service_container
+                  - @template
+                  - @controller.helper
+                  - @dbal.wiki_conn
+                  - @dbal.conn
 
     eff.elite_bundle.cron.controller:
             class: eff\elite_bundle\controller\cron_controller
@@ -44,6 +49,12 @@ services:
             class: eff\elite_bundle\core\page
             arguments:
                    - @dbal.wiki_conn
+
+    eff.elite_bundle.member:
+            class: eff\elite_bundle\core\member
+            arguments:
+                   - @dbal.wiki_conn
+                   - @dbal.conn
 
     eff.elite_bundle.server:
             class: eff\elite_bundle\core\server_query

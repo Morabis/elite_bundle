@@ -24,4 +24,6 @@ interface acp_interface
 
     public function display_system_messages();
 
+    public function display_member_profiles();
+
 }
