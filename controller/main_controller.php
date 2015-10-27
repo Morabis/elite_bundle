@@ -45,6 +45,11 @@ class main_controller implements main_interface
         return $this->helper->message("Member: ".$member->info->name);
 	}
 
+    public function portal()
+    {
+        return $this->helper->render('profile.html','Portal');
+    }
+
     public function member($id)
     {
         if($id > 0)

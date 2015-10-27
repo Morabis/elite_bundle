@@ -8,6 +8,10 @@ elite_bundle_member_controller:
     requirements:
             id:  \d+
 
+elite_bundle_portal:
+    pattern: /portal
+    defaults: { _controller: eff.elite_bundle.controller:portal }
+
 elite_bundle_cron_controller:
     pattern: /cron/task
     defaults: { _controller: eff.elite_bundle.cron.controller:task }

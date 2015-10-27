@@ -18,7 +18,7 @@ class elite_bundle extends \phpbb\cron\task\base
 	public function run()
 	{
         $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
-        $this->log->add('admin','2','127.0.0.1','RUN_TASK',time());
+        //$this->log->add('admin','2','127.0.0.1','RUN_TASK',time());
         $this->config->set('elite_bundle_last_gc',time());
 	}
 
