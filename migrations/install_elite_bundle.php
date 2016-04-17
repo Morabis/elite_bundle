@@ -24,10 +24,13 @@ class install_elite_bundle extends \phpbb\db\migration\migration
 	public function update_data()
 	{
 		return array(
+			//add config
 			array('config.add', array('elite_bundle_gc', 60)),
 			array('config.add', array('elite_bundle_last_gc', '0', 1)),
 			array('config.add', array('elite_bundle_minutes', 3)),
-			array('config.add', array('elite_bundle_version', '1.0.0-a1'))
+			array('config.add', array('elite_bundle_version', '1.0.0-a1')),
+			//add permission
+			array('permission.add', array('a_elite_lgntracker', true))
 		);
 	}
 }

@@ -26,6 +26,10 @@ class listener implements EventSubscriberInterface
 		return array(
             'core.acp_board_config_edit_add'	=> 'load_config_on_setup',
             'core.user_setup'               => 'load_language_on_setup',
+            'core.add_log'                  => 'add_custom_logs',
+            'core.get_logs_modify_type'     => 'get_custom_logs',
+            'core.common'                   => 'common_settings',
+			'core.permissions'				=> 'add_permissions',
 		);
 	}
 
@@ -57,4 +61,46 @@ class listener implements EventSubscriberInterface
             $event['display_vars'] = array('title' => $config_set_ext['title'], 'vars' => $config_set_vars);
         }
     }
+
+    public function add_custom_logs($event)
+    {
+        if($event['mode'] == 'wiki')
+        {
+            $sql_ary = $event['sql_ary'];
+            $sql_ary['log_type'] = 4;
+            $sql_ary['log_data'] = (!empty($event['additional_data'])) ? serialize($event['additional_data']) : '';
+            $event['sql_ary'] = $sql_ary;
+        }
+    }
+
+    public function get_custom_logs($event)
+    {
+        if($event['mode'] == 'wiki')
+        {
+            $log_type = $event['log_type'];
+            $log_type = 4;
+            $event['log_type'] = $log_type;
+        }
+    }
+
+    public function common_settings($event)
+    {
+        define('LOG_WIKI', 4);
+    }
+	
+	public function add_permissions($event)
+	{
+		// Create reputation category
+		$categories = $event['categories'];
+		$categories['elite_bundle'] = 'ACL_CAT_ELITE_BUNDLE';
+		$event['categories'] = $categories;
+
+		// Assign permissions to categories
+		$permissions = $event['permissions'];
+		$permissions = array_merge($permissions, array(
+			// Admin permissions
+			'a_elite_lgntracker'		=> array('lang' => 'ACL_A_ELITE_LGNTRACKER', 'cat' => 'elite_bundle'),
+		));
+		$event['permissions'] = $permissions;
+	}
 }

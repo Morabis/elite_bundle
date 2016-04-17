@@ -90,7 +90,7 @@ services:
     dbal.wiki_conn:
                 class: %dbal.driver.class%
                 calls:
-                    - [sql_connect, [%host%, %user%, %password%, %dbname_wiki%, %dbport%, false, false]]
+                    - [sql_connect, [%host%, %user2%, %password2%, %dbname_wiki%, %dbport%, false, false]]
 
     dbal.glogs_conn:
                 class: %dbal.driver.class%

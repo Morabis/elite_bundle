@@ -56,7 +56,14 @@ class main_controller implements main_interface
         {
             $member = new member($this->wiki_db,$this->db);
             $member->load($id);
-            return $this->helper->message("Member name: ".$member->info->name.", member id: ".$member->info->user_id);
+            if($this->log->add('wiki',$this->user->data['user_id'],$this->user->ip,'test done'))
+            {
+                return $this->helper->message("Member name: ".$member->info->name.", member id: ".$member->info->user_id.", member side: ".$member->info->side);
+            }
+            else
+            {
+                return $this->helper->message("Error.");
+            }
         }
         else
         {
