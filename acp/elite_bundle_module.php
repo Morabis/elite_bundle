@@ -10,6 +10,10 @@
 
 namespace eff\elite_bundle\acp;
 
+/**
+ * @property string tpl_name
+ * @property string page_title
+ */
 class elite_bundle_module
 {
 	public $u_action;
@@ -26,15 +30,6 @@ class elite_bundle_module
 
 		switch ($mode)
 		{
-            case game_logs:
-
-				$this->tpl_name = 'game_logs';
-				$this->page_title = 'Game Logs';
-
-                $acp_controller->display_game_logs();
-
-			break;
-
             case server_logins:
 
                 $this->tpl_name = 'server_logins';
@@ -67,14 +62,6 @@ class elite_bundle_module
                 $this->page_title = 'System Messages';
 
                 $acp_controller->display_system_messages();
-                break;
-
-            case member_profile:
-
-                $this->tpl_name = 'member_profile';
-                $this->page_title = 'Member Profiles';
-
-                $acp_controller->display_member_profiles();
                 break;
 		}
 	}

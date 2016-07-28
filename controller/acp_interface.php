@@ -14,8 +14,6 @@ interface acp_interface
 {
 	public function set_page_url($u_action);
 
-	public function display_game_logs();
-
     public function display_server_logins();
 
     public function display_player_search();
@@ -23,7 +21,5 @@ interface acp_interface
     public function display_activity_graphs();
 
     public function display_system_messages();
-
-    public function display_member_profiles();
 
 }

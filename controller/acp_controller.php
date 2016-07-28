@@ -57,129 +57,6 @@ class acp_controller implements acp_interface
         return $extension_path;
     }
 
-    public function display_game_logs()
-    {
-        $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
-
-        $action = $this->request->variable('action','',true);
-        switch($action)
-        {
-
-            default:
-                $this->template->assign_vars(array(
-                    'S_SUBMIT' => $this->u_action,
-                    'ADM_PATH' => $this->phpbb_admin_path,
-                    'S_APP_TITLE' => 'Log Files',
-                    'S_APP_DESC' => "Department of Defense application for accessing server log files.<br/><br/>Provide a date/time range, select filter options and click on 'Show' to see logs or 'Download File' to download logs as a txt file.<br/><br/>A single request is limited to 5000 lines!",
-                    'EXT_PATH' => $this->ext_path(),
-                ));
-
-                $sql = 'SELECT entry_ts
-							FROM year_2014
-							ORDER BY id DESC LIMIT 1';
-                $result = $this->glogs_db->sql_query($sql);
-                $last_record_date = (string) $this->glogs_db->sql_fetchfield('entry_ts');
-                $this->glogs_db->sql_freeresult($result);
-                $this->template->assign_var('LAST_RECORD_DATE',$last_record_date);
-
-                break;
-
-            case 'getdata':
-                //decode post
-                $dataString = htmlspecialchars_decode($this->request->variable('formdata','', false));
-
-                //post string > array
-                parse_str($dataString, $formdata);
-
-                //build the query......
-                $sql = $this->tools->buildQuery($formdata, $this->request->variable('idStart',0,true), 5000 );
-
-                //output all entry
-                $result = $this->glogs_db->sql_query($sql);
-
-                //arrr, im a pirate
-                $data = array();
-
-                //loop data, parse eevents, put in pirate to hide in treasure chest
-                while ($name = $this->glogs_db->sql_fetchrow($result))
-                {
-                    $name['entry_event_id'] = $this->tools->numberToEventname($name['entry_event_id']);
-                    $data[] = $name;
-                }
-                //hand out tressure chest 'locked' *arrr*
-                echo json_encode($data);
-
-                //u know
-                $this->glogs_db->sql_freeresult($result);
-                //prevent any other output (error output in this case, cuz i didnt load tpl)
-                die();
-                break;
-
-            case 'downloaddata':
-                //txt header;
-                header('Content-type: text/plain');
-                header('Content-Disposition: attachment; filename="logfile.txt"');
-
-                //GET the vars (url)
-                @$formdata['start'] = $this->request->variable('start','');
-                @$formdata['end'] = $this->request->variable('end','');
-                @$formdata['data'] = $this->request->variable('data','');
-
-                //loggings fun
-                //add_log('admin', 'GET_GAMES_LOG_FILE', 'start: ' . $formdata['start'] . ' || end: ' . $formdata['end']);
-                $this->log->add('admin',$this->user->data['user_id'],$this->user->data['user_ip'],'GET_GAMES_LOG_FILE',time(),array($formdata['start'],$formdata['end']));
-
-                //build qry
-                $sql=$this->tools->buildQuery($formdata);
-
-                //output all entry
-                $result = $this->glogs_db->sql_query($sql);
-
-                //loop uiiiii
-                while ($name = $this->glogs_db->sql_fetchrow($result))
-                {
-                    //event parsing
-                    $name['entry_event_id'] = $this->tools->numberToEventname($name['entry_event_id']);
-
-                    //unleash hell on earth (string to file)
-                    echo $name['entry_ts'] . "\t" . $name['entry_event_id'] . ":\t" . $name['entry_content'] . "\r\n";
-                }
-                //db stuff
-                $this->glogs_db->sql_freeresult($result);
-                //no other output6
-                die();
-                break;
-
-            case 'dataExists':
-                //decode post
-                $dataString = htmlspecialchars_decode($this->request->variable('formdata', '', false));
-
-                //post string > array
-                parse_str($dataString, $formdata);
-
-
-                //build qry
-                $sql=$this->tools->buildQuery($formdata);
-
-                //output all entry
-                $result = $this->glogs_db->sql_query($sql);
-
-                $found = false;
-                //loop uiiiii
-                while ($name = $this->glogs_db->sql_fetchrow($result) && $found==false)
-                {
-                    $found=true;
-                }
-                echo $found?'strtrue':'strfalse';
-
-                //db stuff
-                $this->glogs_db->sql_freeresult($result);
-                //no other output6
-                die();
-                break;
-        }
-    }
-
     public function display_server_logins()
     {
         $this->user->add_lang_ext('eff/elite_bundle','elite_bundle');
@@ -746,11 +623,7 @@ class acp_controller implements acp_interface
         }
 
     }
-
-    public function display_member_profiles()
-    {
-
-    }
+    
 
 }
 

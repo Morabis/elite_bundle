@@ -9,7 +9,9 @@
 
 namespace eff\elite_bundle\migrations;
 
-class install_elite_bundle extends \phpbb\db\migration\migration
+use phpbb\db\migration\migration;
+
+class install_elite_bundle extends migration
 {
 	public function effectively_installed()
 	{
@@ -25,12 +27,20 @@ class install_elite_bundle extends \phpbb\db\migration\migration
 	{
 		return array(
 			//add config
-			array('config.add', array('elite_bundle_gc', 60)),
-			array('config.add', array('elite_bundle_last_gc', '0', 1)),
-			array('config.add', array('elite_bundle_minutes', 3)),
 			array('config.add', array('elite_bundle_version', '1.0.0-a1')),
 			//add permission
-			array('permission.add', array('a_elite_lgntracker', true))
+			array('permission.add', array('a_elite_lgntracker', true)),
+			array('permission.add', array('a_elite_iptracker', true)),
+			array('permission.add', array('a_elite_actracker', true)),
+			array('permission.add', array('a_elite_mstracker', true)),
+			//add modules
+			array('module.add', array('acp', 0, 'ACP_CAT_ELITE_BUNDLE')),
+			array('module.add', array('acp', 'ACP_CAT_ELITE_BUNDLE', 'ACP_ADMIN_TOOLS')),
+			array('module.add', array(
+				'acp', 'ACP_ADMIN_TOOLS', array(
+					'module_basename'	=> '\eff\elite_bundle\acp\elite_bundle_module', 'modes' => array('server_logins', 'player_search', 'activity_graphs', 'system_messages'),
+				),
+			)),
 		);
 	}
 }

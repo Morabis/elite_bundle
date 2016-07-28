@@ -29,14 +29,6 @@ services:
                   - @dbal.wiki_conn
                   - @dbal.conn
 
-    eff.elite_bundle.cron.controller:
-            class: eff\elite_bundle\controller\cron_controller
-            arguments:
-                  - @log
-                  - @user
-                  - %bot_id%
-                  - %bot_ip%
-
     eff.elite_bundle.tools:
             class: eff\elite_bundle\core\tools
             arguments:
@@ -71,21 +63,8 @@ services:
 
     eff.elite_bundle.listener:
             class: eff\elite_bundle\event\listener
-            arguments:
-                - @config
             tags:
                 - { name: event.listener }
-
-    cron.task.core.elite_bundle:
-            class: eff\elite_bundle\cron\task\core\elite_bundle
-            arguments:
-                - @config
-                - @log
-                - @user
-            calls:
-                - [set_name, [cron.task.core.elite_bundle]]
-            tags:
-                - { name: cron.task }
 
     dbal.wiki_conn:
                 class: %dbal.driver.class%
